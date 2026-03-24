@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Making Cents — Economics, Explained</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+/* ── RESET & ROOT ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --copper:     #C49060;
+  --copper-dk:  #8A5A20;
+  --amber:      #C4780A;
+  --text:       #1a1208;
+  --text-mid:   #3a2a18;
+  --text-muted: #7a6a55;
+  --bg-light:   #F2EEE8;
+  --bg-soft:    #E8E4DE;
+  --bg-white:   #FAFAF8;
+  --border:     #D8CEC2;
+  --black:      #0a0a0a;
+  --serif:      'DM Serif Display', Georgia, serif;
+  --sans:       'Plus Jakarta Sans', sans-serif;
+  --nav-h:      58px;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-white);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--copper);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  z-index: 200;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.nav-logo {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  letter-spacing: -0.2px;
+  user-select: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity .2s;
+  opacity: 0.75;
+  letter-spacing: 0.01em;
+}
+
+.nav-links a:hover { opacity: 1; }
+.nav-links a.active { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── PAGE SYSTEM ── */
+.page { display: none; padding-top: var(--nav-h); min-height: 100vh; }
+.page.active { display: block; animation: fadeUp .25s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TICKER ── */
+.ticker {
+  background: var(--black);
+  padding: 11px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+.ticker-track {
+  display: inline-flex;
+  animation: tick 40s linear infinite;
+}
+.ticker-item {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.8);
+  margin: 0 28px;
+}
+.ticker-item::after {
+  content: ' ¢';
+  color: var(--amber);
+  margin-left: 28px;
+}
+@keyframes tick {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── SHARED ── */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 5%; }
+
+.pill-btn {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  border-radius: 100px;
+  border: 1.5px solid var(--text);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .2s, color .2s;
+  text-decoration: none;
+}
+.pill-btn:hover { background: var(--text); color: #fff; }
+
+.pill-btn-filled {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+.pill-btn-filled:hover { background: var(--amber); border-color: var(--amber); }
+
+.category-label {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+  display: block;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--amber);
+}
+
+/* ══════════════════════════════════
+   HOME PAGE
+══════════════════════════════════ */
+
+.home-hero {
+  background: var(--copper);
+  padding: 64px 5% 72px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.hero-left {}
+
+.hero-heading {
+  font-family: var(--serif);
+  font-size: clamp(38px, 5vw, 64px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  color: var(--text);
+  margin-bottom: 22px;
+}
+.hero-heading .accent { color: var(--amber); font-style: italic; }
+
+.hero-sub {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-mid);
+  margin-bottom: 36px;
+  max-width: 420px;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 8px;
+}
+
+.hero-category {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.concept-pill-btn {
+  display: block;
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 14px 22px;
+  border-radius: 100px;
+  border: 1.5px solid rgba(26,18,8,0.5);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  text-align: left;
+}
+.concept-pill-btn:hover {
+  background: rgba(26,18,8,0.06);
+  border-color: var(--text);
+}
+
+/* ══════════════════════════════════
+   OUR CONTENT PAGE
+══════════════════════════════════ */
+
+.content-banner {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.content-banner-panel {
+  background: var(--bg-soft);
+  background-image: linear-gradient(135deg, #D4C4A8 0%, #B8A888 50%, #C8B898 100%);
+  position: relative;
+  overflow: hidden;
+}
+.content-banner-panel::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 12px,
+    rgba(255,255,255,0.04) 12px,
+    rgba(255,255,255,0.04) 13px
+  );
+}
+.content-banner-panel:nth-child(2) { background-image: linear-gradient(135deg, #C8BAA0 0%, #A89878 50%, #B8A888 100%); }
+.content-banner-panel:nth-child(3) { background-image: linear-gradient(135deg, #B8AA90 0%, #9A8A68 50%, #ACA080 100%); }
+
+.content-main-header {
+  padding: 60px 5% 40px;
+  text-align: center;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border);
+}
+.content-main-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 400;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.content-main-header p {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto 28px;
+  line-height: 1.7;
+}
+
+.progress-bar-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 5%;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.progress-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 16px;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--amber);
+  border-radius: 2px;
+}
+
+.course-section {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-white);
+}
+
+.course-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 5%;
+  cursor: pointer;
+  background: var(--bg-white);
+  transition: background .15s;
+  border-bottom: 1px solid var(--border);
+}
+.course-section-header:hover { background: var(--bg-light); }
+
+.course-section-title {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+.course-section-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.course-toggle {
+  font-size: 20px;
+  color: var(--text-muted);
+  transition: transform .2s;
+}
+.course-toggle.open { transform: rotate(180deg); }
+
+.course-lessons {
+  display: flex;
+  flex-direction: column;
+}
+
+.lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 5%;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.lesson-row:last-child { border-bottom: none; }
+.lesson-row:hover { background: var(--bg-light); }
+
+.lesson-thumb {
+  width: 54px;
+  height: 54px;
+  border-radius: 6px;
+  background: var(--bg-soft);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--copper-dk);
+  font-style: italic;
+}
+.lesson-thumb.t1 { background: #D4C4A8; }
+.lesson-thumb.t2 { background: #C8BAAC; }
+.lesson-thumb.t3 { background: #D0C0A4; }
+.lesson-thumb.t4 { background: #C4B89C; }
+.lesson-thumb.t5 { background: #B8A880; }
+
+.lesson-body { flex: 1; }
+.lesson-title {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.lesson-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.lesson-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════
+   ABOUT PAGE
+══════════════════════════════════ */
+
+.about-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 420px;
+}
+
+.about-text-col {
+  padding: 64px 5% 64px 5%;
+  background: var(--bg-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-text-col h1 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 400;
+  letter-spacing: -0.8px;
+  color: var(--text);
+  margin-bottom: 22px;
+  line-height: 1.15;
+}
+
+.about-text-col p {
+  font-size: 15px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  margin-bottom: 16px;
+  max-width: 480px;
+}
+
+.about-img-col {
+  background: var(--bg-soft);
+  background-image: linear-gradient(135deg, #D4C4A8 0%, #B8A888 100%);
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 48px;
+  color: rgba(255,255,255,0.4);
+  font-style: italic;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-img-col::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent, transparent 20px,
+    rgba(255,255,255,0.03) 20px,
+    rgba(255,255,255,0.03) 21px
+  );
+}
+
+.about-img-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.5;
+  position: relative;
+}
+
+.about-contact-strip {
+  background: var(--copper);
+  padding: 64px 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.about-contact-left h2 {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.about-contact-left p {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+}
+
+.about-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.about-values {
+  background: var(--bg-light);
+  padding: 64px 5%;
+}
+
+.about-values h2 {
+  font-family: var(--serif);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.value-card {
+  background: var(--bg-white);
+  padding: 32px 28px;
+}
+
+.value-num {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-style: italic;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.value-card h3 {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.value-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* ══════════════════════════════════
+   COURSE PAGE (INSTRUCTOR + FAQ)
+══════════════════════════════════ */
+
+.instructor-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: var(--bg-white);
+}
+
+.instructor-text {
+  padding: 64px 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.instructor-text h2 {
+  font-family: var(--sans);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.instructor-text p {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+
+.instructor-img {
+  background: linear-gradient(135deg, #D0C0A0 0%, #B0A080 100%);
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 36px;
+  color: rgba(255,255,255,0.35);
+  font-style: italic;
+  position: relative;
+  overflow: hidden;
+}
+
+.instructor-img::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -45deg, transparent, transparent 18px,
+    rgba(255,255,255,0.04) 18px, rgba(255,255,255,0.04) 19px
+  );
+}
+
+.faq-section {
+  background: var(--bg-light);
+  padding: 64px 5%;
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.faq-label {
+  font-family: var(--sans);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-top: 1px solid var(--border);
+}
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
+
+.faq-q {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  gap: 16px;
+  transition: color .15s;
+}
+.faq-q:hover { color: var(--amber); }
+
+.faq-icon {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform .2s;
+  line-height: 1;
+}
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+
+.faq-a {
+  display: none;
+  padding: 0 0 18px;
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.7;
+}
+.faq-item.open .faq-a { display: block; }
+
+/* ══════════════════════════════════
+   CONTACT PAGE
+══════════════════════════════════ */
+
+.contact-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: calc(100vh - var(--nav-h));
+}
+
+.contact-left {
+  padding: 64px 5%;
+  background: var(--bg-white);
+}
+
+.contact-left h1 {
+  font-family: var(--sans);
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+
+.contact-left > p {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.contact-email {
+  font-size: 14px;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 32px;
+  display: block;
+}
+
+.contact-right {
+  background: linear-gradient(135deg, #D4C0A0 0%, #A89070 100%);
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-right::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    -45deg, transparent, transparent 20px,
+    rgba(255,255,255,0.04) 20px, rgba(255,255,255,0.04) 21px
+  );
+}
+
+/* ══════════════════════════════════
+   SHARED FORM STYLES
+══════════════════════════════════ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-white);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 11px 18px;
+  transition: border-color .2s;
+  outline: none;
+  resize: none;
+}
+.form-group textarea {
+  border-radius: 16px;
+  min-height: 100px;
+  resize: vertical;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus { border-color: var(--amber); }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form-success {
+  display: none;
+  background: #EDFAF3;
+  border: 1px solid #86EFAC;
+  color: #166534;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+
+footer {
+  background: var(--black);
+  padding: 48px 5% 28px;
+  border-top: 3px solid var(--amber);
+}
+
+.footer-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 36px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 24px;
+}
+
+.footer-brand {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.footer-brand span { color: var(--amber); }
+
+.footer-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.65;
+  max-width: 240px;
+}
+
+.footer-col h4 {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 14px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-col ul li a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .2s;
+}
+.footer-col ul li a:hover { color: #fff; }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-bottom p {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.2);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .home-hero { grid-template-columns: 1fr; gap: 40px; }
+  .about-top { grid-template-columns: 1fr; }
+  .about-img-col { min-height: 260px; }
+  .about-contact-strip { grid-template-columns: 1fr; gap: 36px; }
+  .instructor-section { grid-template-columns: 1fr; }
+  .instructor-img { min-height: 260px; }
+  .faq-section { grid-template-columns: 1fr; gap: 32px; }
+  .contact-wrap { grid-template-columns: 1fr; }
+  .contact-right { min-height: 260px; }
+  .values-grid { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; gap: 28px; }
+  .content-banner { height: 160px; }
+  .form-row { grid-template-columns: 1fr; }
+  .nav-links { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Making Cents</div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')"    id="nav-home"    class="active">Home</a></li>
+    <li><a onclick="showPage('content')" id="nav-content">Our Content</a></li>
+    <li><a onclick="showPage('about')"   id="nav-about"  >About</a></li>
+    <li><a onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════
+     HOME PAGE
+═══════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Ticker -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span class="ticker-item">Why do footballers earn more than nurses</span>
+      <span class="ticker-item">Why can't the government just print more money</span>
+      <span class="ticker-item">What actually is a recession</span>
+      <span class="ticker-item">What is tax and where does it go</span>
+      <span class="ticker-item">Why can't my parents afford a house</span>
+      <span class="ticker-item">What will AI do to jobs</span>
+      <span class="ticker-item">Why do footballers earn more than nurses</span>
+      <span class="ticker-item">Why can't the government just print more money</span>
+      <span class="ticker-item">What actually is a recession</span>
+      <span class="ticker-item">What is tax and where does it go</span>
+      <span class="ticker-item">Why can't my parents afford a house</span>
+      <span class="ticker-item">What will AI do to jobs</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="home-hero">
+    <div class="hero-left">
+      <h1 class="hero-heading">
+        Making <span class="accent">Cents</span><br>of the world.
+      </h1>
+      <p class="hero-sub">The economic concepts shaping daily life — explained plainly, argued honestly, and written for a generation that deserves to understand the world they are inheriting. No prior knowledge required.</p>
+      <button class="pill-btn pill-btn-filled" onclick="showPage('content')">Learn More</button>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-category">
+        <span class="category-label">Everyday Life</span>
+        <button class="concept-pill-btn" onclick="showPage('content')">Why do footballers earn more than nurses?</button>
+      </div>
+      <div class="hero-category">
+        <span class="category-label">Big Picture</span>
+        <button class="concept-pill-btn" onclick="showPage('content')">Why can't the government just print more money?</button>
+      </div>
+      <div class="hero-category">
+        <span class="category-label">In The News</span>
+        <button class="concept-pill-btn" onclick="showPage('content')">What actually is a recession?</button>
+      </div>
+      <div class="hero-category">
+        <span class="category-label">Money Basics</span>
+        <button class="concept-pill-btn" onclick="showPage('content')">What is tax and where does it go?</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">Making <span>Cents</span></div>
+          <p class="footer-tagline">Economic education for the generation that grew up hearing the words but never the meaning.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a onclick="showPage('home')">Home</a></li>
+            <li><a onclick="showPage('content')">Our Content</a></li>
+            <li><a onclick="showPage('about')">About</a></li>
+            <li><a onclick="showPage('contact')">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Follow us</h4>
+          <ul>
+            <li><a href="#">@makingcents — TikTok</a></li>
+            <li><a href="#">@MakingCentsEcon — YouTube</a></li>
+            <li><a href="#">hello@makingcents.co.uk</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Making Cents — Economics, Explained</p>
+        <p>Made for the curious generation.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     OUR CONTENT PAGE
+═══════════════════════════════════ -->
+<div class="page" id="page-content">
+
+  <!-- Banner -->
+  <div class="content-banner">
+    <div class="content-banner-panel"></div>
+    <div class="content-banner-panel"></div>
+    <div class="content-banner-panel"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="content-main-header">
+    <h1>Our Content</h1>
+    <p>Each lesson addresses an economic concept you have likely encountered in the news, at home, or in conversation — but never had properly explained. By the end of this course, you will understand the forces shaping wages, prices, housing, employment, and public spending. No prior knowledge of economics is assumed.</p>
+    <button class="pill-btn pill-btn-filled">Start Course</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar-wrap">
+    <span>0%</span>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <span>Progress</span>
+  </div>
+
+  <!-- Everyday Life -->
+  <div class="course-section">
+    <div class="course-section-header" onclick="toggleSection(this)">
+      <div>
+        <div class="course-section-title">Everyday life</div>
+        <div class="course-section-meta">3 Lessons</div>
+      </div>
+      <div class="course-toggle open">∨</div>
+    </div>
+    <div class="course-lessons">
+      <div class="lesson-row">
+        <div class="lesson-thumb t1">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">Why do footballers earn more than nurses?</div>
+          <div class="lesson-desc">The market does not pay you according to social utility. Wage determination follows the logic of scarcity, a principle with implications far beyond professional sport.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+      <div class="lesson-row">
+        <div class="lesson-thumb t2">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">Why has the cost of living risen so sharply?</div>
+          <div class="lesson-desc">Price inflation across essential goods — food, energy, housing — has affected household budgets at every income level. Here is what drove it and what the data shows.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+      <div class="lesson-row">
+        <div class="lesson-thumb t3">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">Why is homeownership increasingly inaccessible?</div>
+          <div class="lesson-desc">Property ownership was once achievable on a single median wage. An examination of house price growth, stagnating real wages, and supply constraints explains the structural shift.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big Picture -->
+  <div class="course-section">
+    <div class="course-section-header" onclick="toggleSection(this)">
+      <div>
+        <div class="course-section-title">Big picture</div>
+        <div class="course-section-meta">2 Lessons · 0:55</div>
+      </div>
+      <div class="course-toggle open">∨</div>
+    </div>
+    <div class="course-lessons">
+      <div class="lesson-row">
+        <div class="lesson-thumb t4">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">Why can't the government just print more money?</div>
+          <div class="lesson-desc">Monetary expansion sounds like an obvious solution to public funding constraints. The history of economies that attempted it reveals why the relationship between money supply and value is more complex.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+      <div class="lesson-row">
+        <div class="lesson-thumb t5">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">Why do national levels of prosperity diverge so markedly?</div>
+          <div class="lesson-desc">Geography and natural resources are insufficient explanations for the wealth gap between nations. Institutional economics offers a more rigorous and, ultimately, more hopeful account.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In The News -->
+  <div class="course-section">
+    <div class="course-section-header" onclick="toggleSection(this)">
+      <div>
+        <div class="course-section-title">In the news</div>
+        <div class="course-section-meta">3 Lessons</div>
+      </div>
+      <div class="course-toggle open">∨</div>
+    </div>
+    <div class="course-lessons">
+      <div class="lesson-row">
+        <div class="lesson-thumb t1">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">What is a recession, and what does it mean in practice?</div>
+          <div class="lesson-desc">The word appears in headlines with alarming frequency. A precise understanding of its definition, causes, and historical precedents displaces much of the anxiety it generates.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+      <div class="lesson-row">
+        <div class="lesson-thumb t2">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">Why do central banks adjust interest rates?</div>
+          <div class="lesson-desc">Rate decisions by the Bank of England are among the most consequential in domestic economic policy. This explainer traces their mechanism and real-world effect on borrowing and saving.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+      <div class="lesson-row">
+        <div class="lesson-thumb t3">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">What will artificial intelligence do to employment?</div>
+          <div class="lesson-desc">Economists disagree on the scale and timeline of automation-driven displacement. This entry surveys the principal arguments on both sides without overstating certainty in either direction.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Money Basics -->
+  <div class="course-section">
+    <div class="course-section-header" onclick="toggleSection(this)">
+      <div>
+        <div class="course-section-title">Money basics</div>
+        <div class="course-section-meta">2 Lessons</div>
+      </div>
+      <div class="course-toggle open">∨</div>
+    </div>
+    <div class="course-lessons">
+      <div class="lesson-row">
+        <div class="lesson-thumb t4">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">What is tax, and where does the revenue go?</div>
+          <div class="lesson-desc">Income tax and National Insurance reduce a pay slip by a meaningful sum. Understanding where that revenue flows, and the political debates surrounding it, is foundational economic literacy.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+      <div class="lesson-row">
+        <div class="lesson-thumb t5">¢</div>
+        <div class="lesson-body">
+          <div class="lesson-title">What is the function of a bank?</div>
+          <div class="lesson-desc">Banks accept deposits and issue loans, charging more in interest than they pay. The mechanics of fractional reserve banking, as well as its systemic implications, explained from first principles.</div>
+        </div>
+        <div class="lesson-check"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About your Instructor -->
+  <div class="instructor-section">
+    <div class="instructor-text">
+      <h2>About this platform</h2>
+      <p>Making Cents was built on a simple frustration: economics shapes so much in the world around us — wages, rent, opportunity, political decisions — and yet it is rarely explained to the people most affected by it.</p>
+      <p>This platform exists to change that. Every concept is written from first principles, assumes no prior knowledge, and is honest about where genuine uncertainty or disagreement exists among economists. The aim is clarity, and a first insight for those who are curious about understanding the science that shapes the world around them.</p>
+    </div>
+    <div class="instructor-img">
+      <span style="position:relative;opacity:0.4;font-family:var(--serif);font-style:italic;font-size:28px;color:#fff;">Making Cents</span>
+    </div>
+  </div>
+
+  <!-- FAQs -->
+  <div class="faq-section">
+    <div class="faq-label">FAQs</div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+          Do I need any prior knowledge of economics to use this?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">No. Every concept is written from first principles. If a term requires understanding a previous concept, that concept is explained first. You can begin anywhere in the course and follow the links where needed.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+          Who is this course designed for?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Making Cents is written primarily for readers aged 13 to 15, though the content is accessible to anyone who wants a plain-English introduction to economics. The concepts are the same ones discussed in news coverage and public debate — explained without assumption of prior knowledge.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+          How long does each lesson take?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Most lessons are designed to be read in three to five minutes. The goal is to explain one concept clearly and completely — not to be comprehensive at the expense of clarity.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this.parentElement)">
+          Can I suggest a concept to be covered?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">Yes. If there is an economic term or idea you have encountered and would like explained, use the Contact page to submit a suggestion. Reader suggestions directly inform what gets covered next.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">Making <span>Cents</span></div>
+          <p class="footer-tagline">Economic education for the generation that grew up hearing the words but never the meaning.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a onclick="showPage('home')">Home</a></li>
+            <li><a onclick="showPage('content')">Our Content</a></li>
+            <li><a onclick="showPage('about')">About</a></li>
+            <li><a onclick="showPage('contact')">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Follow us</h4>
+          <ul>
+            <li><a href="#">@makingcents — TikTok</a></li>
+            <li><a href="#">@MakingCentsEcon — YouTube</a></li>
+            <li><a href="#">hello@makingcents.co.uk</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Making Cents — Economics, Explained</p>
+        <p>Made for the curious generation.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     ABOUT PAGE
+═══════════════════════════════════ -->
+<div class="page" id="page-about">
+
+  <div class="about-top">
+    <div class="about-text-col">
+      <h1>Who we are</h1>
+      <p>Economics is present in almost every significant decision a society makes — about wages, housing, healthcare, education, and opportunity. Yet for most young people, the subject remains inaccessible: either too academic in its framing, or too simplified to be genuinely useful.</p>
+      <p>Making Cents was founded on a straightforward premise: that a 13-year-old who hears the word "recession" on the news deserves a clear, honest account of what it means — not a dismissal, and not a textbook definition stripped of context.</p>
+      <p>The goal is not to produce economists. It is to produce citizens who understand the forces shaping their lives.</p>
+    </div>
+    <div class="about-img-col">
+      <div class="about-img-placeholder">
+        <span style="font-size:48px;">¢</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Values -->
+  <div class="about-values">
+    <h2>What we stand for</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-num">I</div>
+        <h3>Plain language, always.</h3>
+        <p>Technical vocabulary is used only where it is the most precise available tool — and always explained on first use. Complexity is never a substitute for clarity.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-num">II</div>
+        <h3>Grounded in the familiar.</h3>
+        <p>Every concept is introduced through something the reader already has experience of — a price, a pay slip, a headline. Abstraction follows, not precedes, understanding.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-num">III</div>
+        <h3>Honest about uncertainty.</h3>
+        <p>Economics contains genuine disputes. Where the evidence is contested or incomplete, this platform says so — and explains why reasonable people disagree.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact strip -->
+  <div class="about-contact-strip">
+    <div class="about-contact-left">
+      <h2>Contact us</h2>
+      <p>We welcome concept suggestions from readers — if there is an economic term or idea you have encountered and would like explained, please write to us. We also respond to enquiries from educators interested in using Making Cents as a classroom resource.</p>
+    </div>
+    <div class="about-contact-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First name</label>
+          <input type="text" placeholder="First name">
+        </div>
+        <div class="form-group">
+          <label>Last name</label>
+          <input type="text" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group" style="display:flex;flex-direction:row;align-items:center;gap:8px;">
+        <input type="checkbox" id="newsletter" style="width:16px;height:16px;border-radius:4px;flex-shrink:0;">
+        <label for="newsletter" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--text-mid);font-weight:500;">Sign up for news and updates</label>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Your message..."></textarea>
+      </div>
+      <button class="pill-btn pill-btn-filled" onclick="submitAboutForm(this)">Submit</button>
+      <div class="form-success" id="aboutSuccess">Your message has been received. We will respond shortly.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">Making <span>Cents</span></div>
+          <p class="footer-tagline">Economic education for the generation that grew up hearing the words but never the meaning.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a onclick="showPage('home')">Home</a></li>
+            <li><a onclick="showPage('content')">Our Content</a></li>
+            <li><a onclick="showPage('about')">About</a></li>
+            <li><a onclick="showPage('contact')">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Follow us</h4>
+          <ul>
+            <li><a href="#">@makingcents — TikTok</a></li>
+            <li><a href="#">@MakingCentsEcon — YouTube</a></li>
+            <li><a href="#">hello@makingcents.co.uk</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Making Cents — Economics, Explained</p>
+        <p>Made for the curious generation.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     CONTACT PAGE
+═══════════════════════════════════ -->
+<div class="page" id="page-contact">
+
+  <div class="contact-wrap">
+    <div class="contact-left">
+      <h1>Contact Us</h1>
+      <p>Concept suggestions, educational enquiries, and general correspondence are all welcome. If there is an economic idea you would like explained, or if you are an educator interested in using Making Cents as a classroom resource, please get in touch using the form below.</p>
+      <a class="contact-email" href="mailto:making-cents-gp@proton.me">making-cents-gp@proton.me</a>
+
+      <div style="display:flex;flex-direction:column;gap:14px;" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" placeholder="Last name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Your message..."></textarea>
+        </div>
+        <button class="pill-btn pill-btn-filled" onclick="submitContactForm()" style="align-self:flex-start;">Send</button>
+        <div class="form-success" id="contactSuccess">Your message has been received. We will respond shortly.</div>
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <span style="position:relative;opacity:0.3;font-family:var(--serif);font-style:italic;font-size:32px;color:#fff;">Making Cents</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">Making <span>Cents</span></div>
+          <p class="footer-tagline">Economic education for the generation that grew up hearing the words but never the meaning.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a onclick="showPage('home')">Home</a></li>
+            <li><a onclick="showPage('content')">Our Content</a></li>
+            <li><a onclick="showPage('about')">About</a></li>
+            <li><a onclick="showPage('contact')">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Follow us</h4>
+          <ul>
+            <li><a href="#">@makingcents — TikTok</a></li>
+            <li><a href="#">@MakingCentsEcon — YouTube</a></li>
+            <li><a href="#">making-cents-gp@proton.me</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Making Cents — Economics, Explained</p>
+        <p>Made for the curious generation.</p>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleSection(header) {
+  const toggle = header.querySelector('.course-toggle');
+  const lessons = header.nextElementSibling;
+  const isOpen = toggle.classList.contains('open');
+  toggle.classList.toggle('open', !isOpen);
+  toggle.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+  lessons.style.display = isOpen ? 'none' : 'flex';
+}
+
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+function submitContactForm() {
+  document.getElementById('contactSuccess').style.display = 'block';
+  document.querySelectorAll('#contactForm input, #contactForm textarea').forEach(el => {
+    el.value = ''; el.disabled = true;
+  });
+  document.querySelector('#contactForm button').style.display = 'none';
+}
+
+function submitAboutForm(btn) {
+  document.getElementById('aboutSuccess').style.display = 'block';
+  btn.style.display = 'none';
+}
+</script>
+</body>
+</html>
