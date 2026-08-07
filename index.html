@@ -1085,26 +1085,36 @@ footer {
 
       <!-- Widget 2: Supply & demand playground -->
       <div class="widget-card swoop" data-dir="right">
-        <div class="widget-eyebrow">Playground</div>
-        <div class="widget-title">Supply &amp; demand</div>
-        <div class="widget-sub">Drag the price. Watch what buyers want and what sellers offer pull apart — or meet.</div>
-        <div class="sd-chart-wrap">
-          <svg viewBox="0 0 300 220" width="100%" id="sdChart">
-            <line x1="30" y1="200" x2="280" y2="200" stroke="var(--border)" stroke-width="1.5"/>
-            <line x1="30" y1="20" x2="30" y2="200" stroke="var(--border)" stroke-width="1.5"/>
-            <line x1="270" y1="20" x2="39.6" y2="200" stroke="#1a1208" stroke-width="2" opacity="0.75"/>
-            <line x1="39.6" y1="20" x2="270" y2="200" stroke="#D1A54F" stroke-width="2" opacity="0.85"/>
-            <line id="sdPriceLine" x1="30" y1="106" x2="270" y2="106" stroke="#7a6a55" stroke-width="1.5" stroke-dasharray="4 3"/>
-            <circle id="sdDemandDot" cx="150" cy="106" r="5" fill="#1a1208"/>
-            <circle id="sdSupplyDot" cx="150" cy="106" r="5" fill="#D1A54F"/>
-            <text x="255" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" fill="#1a1208" opacity="0.6">Demand</text>
-            <text x="230" y="34" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" fill="#D1A54F">Supply</text>
-          </svg>
-        </div>
-        <input type="range" class="sd-slider" id="sdSlider" min="0" max="120" value="62" oninput="renderSupplyDemand(this.value)">
-        <div class="sd-readout"><span>Price: <strong id="sdPriceOut">£6.20</strong></span><span>Quantity demanded / supplied</span></div>
-        <div class="sd-verdict" id="sdVerdict">Move the slider to set a price.</div>
-      </div>
+  <div class="widget-eyebrow">Playground</div>
+  <div class="widget-title">Supply &amp; demand</div>
+  <div class="widget-sub">Drag the price. Watch what buyers want and what sellers offer pull apart — or meet.</div>
+  
+  <div class="sd-chart-wrap">
+    <svg viewBox="0 0 300 220" width="100%" id="sdChart">
+      <line x1="30" y1="200" x2="280" y2="200" stroke="var(--border)" stroke-width="1.5"/>
+      <line x1="30" y1="20" x2="30" y2="200" stroke="var(--border)" stroke-width="1.5"/>
+      
+      <line x1="39.6" y1="200" x2="270" y2="20" stroke="#1a1208" stroke-width="2" opacity="0.75"/>
+      
+      <line x1="39.6" y1="20" x2="270" y2="200" stroke="#D1A54F" stroke-width="2" opacity="0.85"/>
+      
+      <line id="sdPriceLine" x1="30" y1="106" x2="270" y2="106" stroke="#7a6a55" stroke-width="1.5" stroke-dasharray="4 3"/>
+      
+      <circle id="sdDemandDot" cx="150" cy="106" r="5" fill="#D1A54F"/>
+      <circle id="sdSupplyDot" cx="150" cy="106" r="5" fill="#1a1208"/>
+      
+      <text x="42" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" font-weight="600" fill="#D1A54F">Demand</text>
+      <text x="250" y="16" font-family="'Plus Jakarta Sans',sans-serif" font-size="10" font-weight="600" fill="#1a1208" opacity="0.6">Supply</text>
+    </svg>
+  </div>
+  
+  <input type="range" class="sd-slider" id="sdSlider" min="0" max="120" value="62" oninput="renderSupplyDemand(this.value)">
+  <div class="sd-readout">
+    <span>Price: <strong id="sdPriceOut">£6.20</strong></span>
+    <span>Quantity demanded / supplied</span>
+  </div>
+  <div class="sd-verdict" id="sdVerdict">Move the slider to set a price.</div>
+</div>
 
     </div>
   </section>
