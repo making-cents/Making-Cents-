@@ -307,18 +307,58 @@ nav {
 .indicator-source { font-size: 10.5px; color: var(--text-muted); margin-top: 10px; opacity: 0.7; }
 
 /* Supply & demand widget */
-.sd-chart-wrap { position: relative; margin-bottom: 18px; }
-.sd-slider { width: 100%; margin-bottom: 14px; accent-color: var(--amber); }
-.sd-readout { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-.sd-readout strong { color: var(--text); font-family: var(--sans); }
-.sd-verdict {
-  font-size: 13px; color: var(--text-mid); line-height: 1.6; border-top: 1px solid var(--border);
-  padding-top: 16px; margin-top: 6px; min-height: 42px;
+.sd-chart-wrap { 
+  position: relative; 
+  margin-bottom: 18px; 
 }
-.sd-verdict strong { color: var(--amber); }
+
+.sd-slider { 
+  width: 100%; 
+  margin-bottom: 14px; 
+  accent-color: var(--amber); 
+}
+
+.sd-readout { 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: 12px; 
+  color: var(--text-muted); 
+  margin-bottom: 4px; 
+}
+
+.sd-readout strong { 
+  color: var(--text); 
+  font-family: var(--sans); 
+}
+
+.sd-verdict {
+  font-size: 13px; 
+  color: var(--text-mid); 
+  line-height: 1.6; 
+  border-top: 1px solid var(--border);
+  padding-top: 16px; 
+  margin-top: 6px; 
+  min-height: 42px;
+}
+
+.sd-verdict strong { 
+  color: var(--amber); 
+}
+
+
+/* Smooth movement for supply-demand animation */
+#sdDemandDot,
+#sdSupplyDot,
+#sdGap,
+#sdPriceLine {
+    transition: all 0.18s ease;
+}
+
 
 @media (max-width: 768px) {
-  .live-econ-grid { grid-template-columns: 1fr; }
+  .live-econ-grid { 
+    grid-template-columns: 1fr; 
+  }
 }
 
 /* ── Floating background blobs (ambient motion) ── */
@@ -1693,47 +1733,114 @@ function renderIndicator(key) {
 }
 
 // ── SUPPLY & DEMAND PLAYGROUND ──
-function renderSupplyDemand(val) {
-  // Slider value is 0 to 120.
-  // Converts value to Y coordinate: 0 -> y=200 (bottom), 120 -> y=20 (top)
-  const priceY = 200 - (val / 120) * 180;
+function renderSupplyDemand(val){
 
-  // Exact X-coordinate calculations:
-  // Supply: at bottom (y=200), x=30. At top (y=20), x=270.
-  const supplyX = 30 + ((200 - priceY) / 180) * (270 - 30);
-  
-  // Demand: at bottom (y=200), x=270. At top (y=20), x=30.
-  const demandX = 270 - ((200 - priceY) / 180) * (270 - 30);
+    val = Number(val);
 
-  // Update Price Line position
-  document.getElementById('sdPriceLine').setAttribute('y1', priceY);
-  document.getElementById('sdPriceLine').setAttribute('y2', priceY);
+    const LEFT = 30;
+    const RIGHT = 280;
+    const TOP = 20;
+    const BOTTOM = 200;
 
-  // Update Dots positions
-  const demandDot = document.getElementById('sdDemandDot');
-  demandDot.setAttribute('cx', demandX);
-  demandDot.setAttribute('cy', priceY);
+    // Price line
+    const priceY =
+        BOTTOM - (val/120)*(BOTTOM-TOP);
 
-  const supplyDot = document.getElementById('sdSupplyDot');
-  supplyDot.setAttribute('cx', supplyX);
-  supplyDot.setAttribute('cy', priceY);
+    // Percentage up the graph
+    const t =
+        (BOTTOM-priceY)/(BOTTOM-TOP);
 
-  // Update price display text
-  document.getElementById('sdPriceOut').innerText = `£${(val / 10).toFixed(2)}`;
+    // Dot positions
+    const supplyX =
+        LEFT + t*(RIGHT-LEFT);
 
-  // Dynamic Verdict message logic
-  const verdict = document.getElementById('sdVerdict');
-  const qtyDemand = Math.round((demandX - 30) / 2.4);
-  const qtySupply = Math.round((supplyX - 30) / 2.4);
-  const diff = Math.abs(qtyDemand - qtySupply);
+    const demandX =
+        RIGHT - t*(RIGHT-LEFT);
 
-  if (qtyDemand > qtySupply) {
-    verdict.innerHTML = `<strong>Shortage of ${diff} units.</strong> Price is too low — buyers want more than sellers are offering. In a real market, price would tend to rise from here.`;
-  } else if (qtySupply > qtyDemand) {
-    verdict.innerHTML = `<strong>Surplus of ${diff} units.</strong> Price is too high — sellers offer more than buyers want to purchase. In a real market, price would tend to fall from here.`;
-  } else {
-    verdict.innerHTML = `<strong>Market Equilibrium!</strong> At this price, quantity demanded equals quantity supplied.`;
-  }
+    // Price line
+    const priceLine =
+        document.getElementById("sdPriceLine");
+
+    priceLine.setAttribute("y1",priceY);
+    priceLine.setAttribute("y2",priceY);
+
+    // Supply dot
+    const supplyDot =
+        document.getElementById("sdSupplyDot");
+
+    supplyDot.setAttribute("cx",supplyX);
+    supplyDot.setAttribute("cy",priceY);
+
+    // Demand dot
+    const demandDot =
+        document.getElementById("sdDemandDot");
+
+    demandDot.setAttribute("cx",demandX);
+    demandDot.setAttribute("cy",priceY);
+
+    // Gap line
+    const gap =
+        document.getElementById("sdGap");
+
+    gap.setAttribute("x1",supplyX);
+    gap.setAttribute("x2",demandX);
+    gap.setAttribute("y1",priceY);
+    gap.setAttribute("y2",priceY);
+
+    // Quantities
+    const qtyDemand =
+        Math.round(((demandX-LEFT)/(RIGHT-LEFT))*100);
+
+    const qtySupply =
+        Math.round(((supplyX-LEFT)/(RIGHT-LEFT))*100);
+
+    // Gap colour
+    if(qtyDemand>qtySupply){
+
+        gap.setAttribute("stroke","#c84d4d");
+
+    }else if(qtySupply>qtyDemand){
+
+        gap.setAttribute("stroke","#2d74da");
+
+    }else{
+
+        gap.setAttribute("stroke","#4caf50");
+
+    }
+
+    // Price
+    document.getElementById("sdPriceOut").innerHTML =
+        `£${(val/10).toFixed(2)}`;
+
+    // Verdict
+    const verdict =
+        document.getElementById("sdVerdict");
+
+    const diff =
+        Math.abs(qtyDemand-qtySupply);
+
+    if(diff===0){
+
+        verdict.innerHTML =
+        "<strong>Market Equilibrium!</strong> Buyers and sellers agree on both the price and the quantity traded.";
+
+    }
+
+    else if(qtyDemand>qtySupply){
+
+        verdict.innerHTML =
+        `<strong>Shortage of ${diff} units.</strong> Price is below equilibrium, so consumers wish to buy more than firms are willing to sell. Competitive pressure would tend to push prices upwards.`;
+
+    }
+
+    else{
+
+        verdict.innerHTML =
+        `<strong>Surplus of ${diff} units.</strong> Price is above equilibrium, so firms supply more than consumers wish to purchase. Competitive pressure would tend to push prices downwards.`;
+
+    }
+
 }
 
 // ── SWOOP-IN SCROLL REVEAL ──
