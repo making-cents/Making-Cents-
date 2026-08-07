@@ -1094,9 +1094,9 @@ footer {
             <line x1="30" y1="200" x2="280" y2="200" stroke="var(--border)" stroke-width="1.5"/>
             <line x1="30" y1="20" x2="30" y2="200" stroke="var(--border)" stroke-width="1.5"/>
             
-            <line x1="30" y1="200" x2="270" y2="20" stroke="#1a1208" stroke-width="2" opacity="0.75"/>
+            <line x1="30" y1="200" x2="280" y2="20" stroke="#1a1208" stroke-width="2" opacity="0.75"/>
             
-            <line x1="30" y1="20" x2="270" y2="200" stroke="#D1A54F" stroke-width="2" opacity="0.85"/>
+            <line x1="30" y1="20" x2="280" y2="200" stroke="#D1A54F" stroke-width="2" opacity="0.85"/>
             
             <line id="sdPriceLine" x1="30" y1="110" x2="270" y2="110" stroke="#7a6a55" stroke-width="1.5" stroke-dasharray="4 3"/>
             
@@ -1693,31 +1693,46 @@ function renderIndicator(key) {
 }
 
 // ── SUPPLY & DEMAND PLAYGROUND ──
-function renderSupplyDemand(sliderVal) {
-  const price = sliderVal / 10; // £0 – £12
-  const qd = Math.max(0, Math.min(100, 100 - price * 8));
-  const qs = Math.max(0, Math.min(100, price * 8));
+function renderSupplyDemand(val) {
+  // Slider value is 0 to 120.
+  // Converts value to Y coordinate: 0 -> y=200 (bottom), 120 -> y=20 (top)
+  const priceY = 200 - (val / 120) * 180;
 
-  const y = 200 - price * 15;
-  const xDemand = 30 + qd * 2.4;
-  const xSupply = 30 + qs * 2.4;
+  // Exact X-coordinate calculations:
+  // Supply: at bottom (y=200), x=30. At top (y=20), x=270.
+  const supplyX = 30 + ((200 - priceY) / 180) * (270 - 30);
+  
+  // Demand: at bottom (y=200), x=270. At top (y=20), x=30.
+  const demandX = 270 - ((200 - priceY) / 180) * (270 - 30);
 
-  document.getElementById('sdPriceLine').setAttribute('y1', y);
-  document.getElementById('sdPriceLine').setAttribute('y2', y);
-  document.getElementById('sdDemandDot').setAttribute('cx', xDemand);
-  document.getElementById('sdDemandDot').setAttribute('cy', y);
-  document.getElementById('sdSupplyDot').setAttribute('cx', xSupply);
-  document.getElementById('sdSupplyDot').setAttribute('cy', y);
-  document.getElementById('sdPriceOut').textContent = '£' + price.toFixed(2);
+  // Update Price Line position
+  document.getElementById('sdPriceLine').setAttribute('y1', priceY);
+  document.getElementById('sdPriceLine').setAttribute('y2', priceY);
 
-  const gap = Math.round(qd - qs);
+  // Update Dots positions
+  const demandDot = document.getElementById('sdDemandDot');
+  demandDot.setAttribute('cx', demandX);
+  demandDot.setAttribute('cy', priceY);
+
+  const supplyDot = document.getElementById('sdSupplyDot');
+  supplyDot.setAttribute('cx', supplyX);
+  supplyDot.setAttribute('cy', priceY);
+
+  // Update price display text
+  document.getElementById('sdPriceOut').innerText = `£${(val / 10).toFixed(2)}`;
+
+  // Dynamic Verdict message logic
   const verdict = document.getElementById('sdVerdict');
-  if (Math.abs(gap) <= 2) {
-    verdict.innerHTML = `<strong>Equilibrium.</strong> At this price, what buyers want and what sellers offer roughly match — no shortage, no waste.`;
-  } else if (gap > 0) {
-    verdict.innerHTML = `<strong>Shortage of ${gap} units.</strong> Price is too low — buyers want more than sellers are offering. In a real market, price would tend to rise from here.`;
+  const qtyDemand = Math.round((demandX - 30) / 2.4);
+  const qtySupply = Math.round((supplyX - 30) / 2.4);
+  const diff = Math.abs(qtyDemand - qtySupply);
+
+  if (qtyDemand > qtySupply) {
+    verdict.innerHTML = `<strong>Shortage of ${diff} units.</strong> Price is too low — buyers want more than sellers are offering. In a real market, price would tend to rise from here.`;
+  } else if (qtySupply > qtyDemand) {
+    verdict.innerHTML = `<strong>Surplus of ${diff} units.</strong> Price is too high — sellers offer more than buyers want to purchase. In a real market, price would tend to fall from here.`;
   } else {
-    verdict.innerHTML = `<strong>Surplus of ${Math.abs(gap)} units.</strong> Price is too high — sellers are offering more than buyers want. In a real market, price would tend to fall from here.`;
+    verdict.innerHTML = `<strong>Market Equilibrium!</strong> At this price, quantity demanded equals quantity supplied.`;
   }
 }
 
