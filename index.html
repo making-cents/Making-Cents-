@@ -254,7 +254,15 @@ nav {
 .instructor-text p { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 14px; }
 .instructor-img { background: var(--copper); min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .instructor-img svg { width: 100%; height: 100%; }
-.instructor-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+.instructor-img img {
+  width: 85%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+  margin: 0 auto;
+}
 
 .faq-section { background: var(--bg-light); padding: 64px 5%; display: grid; grid-template-columns: 1fr 1.8fr; gap: 80px; align-items: start; }
 .faq-label { font-family: var(--sans); font-size: clamp(28px, 3.5vw, 44px); font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
