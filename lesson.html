@@ -22,7 +22,6 @@ html{scroll-behavior:smooth;}
 }
 body{font-family:var(--sans);background:var(--bg-white);color:var(--text);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased;}
 
-/* ── NAV (matches main site) ── */
 nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--copper);display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:200;border-bottom:1px solid rgba(0,0,0,0.08);}
 .nav-logo{display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;text-decoration:none;}
 .nav-logo-icon{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--text);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--text);}
@@ -31,11 +30,9 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--cop
 .nav-back{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);text-decoration:none;opacity:0.75;display:flex;align-items:center;gap:6px;}
 .nav-back:hover{opacity:1;}
 
-/* ── READING PROGRESS ── */
 .progress-rail{position:fixed;top:var(--nav-h);left:0;right:0;height:3px;background:var(--border);z-index:199;}
 .progress-fill{height:100%;width:0%;background:var(--amber);transition:width .1s linear;}
 
-/* ── HERO (cinematic dark moment) ── */
 .lesson-hero{
   background:var(--text);
   padding:calc(var(--nav-h) + 72px) 5% 80px;
@@ -69,7 +66,6 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--cop
 @keyframes fadeIn{to{opacity:1;}}
 @keyframes riseIn{to{opacity:1;transform:translateY(0);}}
 
-/* Rising-bar mark, animating in on load — echoes the logo */
 .hero-mark{position:absolute;right:6%;top:50%;transform:translateY(-50%);opacity:0.9;z-index:1;}
 .hero-mark svg{width:120px;height:120px;}
 @media (max-width:700px){.hero-mark{display:none;}}
@@ -80,7 +76,6 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--cop
 @keyframes growBar{from{transform:scaleY(0);}to{transform:scaleY(1);}}
 @keyframes pulseBar{0%,100%{transform:scaleY(1);}50%{transform:scaleY(0.82);}}
 
-/* ── ARTICLE BODY ── */
 .lesson-body{max-width:680px;margin:0 auto;padding:56px 5% 40px;}
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.16,1,.3,1);}
 .reveal.in-view{opacity:1;transform:translateY(0);}
@@ -94,7 +89,6 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--cop
 }
 .lesson-placeholder strong{color:var(--text-mid);}
 
-/* Key-stat pull block — "hero is a thesis" at paragraph level */
 .key-stat{
   display:flex; align-items:baseline; gap:20px; margin:40px 0;
   padding:28px 30px; border-left:3px solid var(--amber); background:var(--bg-light); border-radius:0 8px 8px 0;
@@ -107,7 +101,6 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--cop
 .glossary-term{font-family:var(--sans);font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px;}
 .glossary-def{font-size:13.5px;color:var(--text-mid);line-height:1.65;}
 
-/* Related concepts strip */
 .related{background:var(--bg-light);padding:48px 5% 64px;}
 .related-inner{max-width:680px;margin:0 auto;}
 .related h3{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px;}
@@ -120,7 +113,6 @@ nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--cop
 }
 .related-chip:hover{transform:translateY(-3px);border-color:var(--amber);background:#fff;}
 
-/* ── FOOTER (matches main site) ── */
 footer{background:var(--black);padding:48px 5% 28px;border-top:3px solid var(--amber);}
 .footer-inner{max-width:1140px;margin:0 auto;}
 .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px;}
@@ -228,7 +220,7 @@ const LESSONS = {
     keyStat: { num: '3,900+', label: 'nurses could be paid the median NHS salary for the cost of one top-flight footballer\'s annual wage — a gap this lesson explains, rather than just states.' },
     body: [
       "If society paid people according to how important their work was, nurses would almost certainly earn more than footballers. Nurses are the backbone of our healthcare system, bridging the gap between patients and doctors, whilst professional footballers simply entertain us. Yet some elite footballers earn in a week what many nurses earn in a year. The short answer is that markets do not determine wages according to social utility, they determine wages according to supply and demand, as well as the economic value a worker creates for an employer.",
-      "<strong>The common misunderstanding</strong><br>Many people assume wages reflect how hard a job is, where hard can perhaps have multiple definitons, such as a job's physical demands, or maybe how long it's hours are. Perhaps salaries are evaluated based off of  how much society needs the service they provide, as in our example, healthcare, something that has been at the heart of societal priorities for human quality of life since the dawn of man. In reality, these factors often matter far less than expected. Coal miners historically performed extremely difficult and dangerous work, yet were not among the highest-paid workers. Teachers shape the next generation but generally earn less than corporate lawyers. The labour market is not a moral system that rewards virtue: instead it is an economic system that rewards scarcity and the ability to generate revenue.",
+      "<strong>The common misunderstanding</strong><br>Many people assume wages reflect how hard a job is, where hard can perhaps have multiple definitons, such as a job's physical demands, or maybe how long it's hours are. Perhaps salaries are evaluated based off of how much society needs the service they provide, as in our example, healthcare, something that has been at the heart of societal priorities for human quality of life since the dawn of man. In reality, these factors often matter far less than expected. Coal miners historically performed extremely difficult and dangerous work, yet were not among the highest-paid workers. Teachers shape the next generation but generally earn less than corporate lawyers. The labour market is not a moral system that rewards virtue: instead it is an economic system that rewards scarcity and the ability to generate revenue.",
       "<strong>The economics of scarcity</strong><br>A skill is scarce when very few people can perform it at the required level. There are millions of people who can play football; there are only a tiny number who can consistently perform at the level required to start for a top Premier League club. A hospital can recruit from a very large pool of qualified nurses. A football club looking for a world-class striker may have only a handful of realistic candidates on Earth. When a resource is scarce and many buyers want it, the price rises.",
       "<strong>Footballers are paid from a huge revenue stream</strong><br>Elite football operates in a global entertainment industry. According to Deloitte's Annual Review of Football Finance, Premier League clubs generated £6.8 billion in revenue during the 2024/25 season — £3.4 billion from broadcast rights alone, £2.4 billion from commercial revenue, and over £1 billion from matchday revenue for the first time. That money comes from television rights, sponsorship, merchandise, tickets, and streaming subscriptions. When hundreds of millions of people worldwide are willing to pay to watch football, even a small improvement in team performance can be worth enormous sums.",
       "<strong>So, what's the difference?</strong><br>Employing one additional nurse does not suddenly bring millions of pounds of new revenue into a hospital: the benefits are real and invaulable on an indivudal scale, but difficult to monetise directly. By contrast, an elite striker who helps a club qualify for the Champions League, sell more shirts, create more fans of the club to buy subscriptions, and attract new sponsors can generate tens of millions in additional revenue. Paying that player £15–20 million a year may make clear economic sense. The player's wage reflects the value they create for the club's revenues, not their value to society.",
@@ -255,10 +247,8 @@ const LESSONS = {
       { term: "Incentives", def: "Rewards or penalties that influence how people or firms behave e.g. higher pay incentivising firms to compete for scarce talent." },
       { term: "Market economy", def: "An economic system in which prices, wages, and production are largely determined by supply and demand rather than central planning." }
     ],
-
-    
     related: ['cost-of-living-risen', 'tax-where-does-it-go']
-      
+  },
   'cost-of-living-risen': {
     category: 'Everyday Life',
     title: "Why has the cost of living risen so sharply?",
@@ -287,8 +277,6 @@ const LESSONS = {
       { term: "Trade-off", def: "A situation in economics where achieving one goal (e.g. lower inflation) comes at the cost of another (e.g. higher mortgage costs)." }
     ],
     related: ['why-footballers-earn-more', 'homeownership-inaccessible']
-  },
-  
   },
   'homeownership-inaccessible': {
     category: 'Everyday Life',
@@ -398,11 +386,9 @@ function render() {
     return l ? `<a class="related-chip" href="lesson.html?slug=${slug}">${l.title}</a>` : '';
   }).join('');
 
-  // Re-observe newly injected .reveal elements
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 }
 
-// Scroll reveal
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -412,7 +398,6 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15 });
 
-// Reading progress
 function updateProgress() {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
   const scrolled = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
