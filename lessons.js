@@ -1,4 +1,4 @@
-const LESSONS = {
+window.LESSONS = {
   'why-footballers-earn-more': {
     category: 'Everyday Life',
     title: "Why do footballers earn more than nurses?",
