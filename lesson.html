@@ -207,9 +207,9 @@ footer{background:var(--black);padding:48px 5% 28px;border-top:3px solid var(--a
   </div>
 </footer>
 
+<script src="lessons.js"></script>
 <script>
-// ── LESSON DATA ──
-const LESSONS = {};
+// ── LESSON RENDERER ──
 
 function getSlug() {
   const params = new URLSearchParams(window.location.search);
@@ -218,7 +218,12 @@ function getSlug() {
 
 function render() {
   const slug = getSlug();
-  const lesson = LESSONS[slug] || LESSONS['why-footballers-earn-more'];
+  const lessons = window.LESSONS || {};
+  const lesson = lessons[slug] || lessons['why-footballers-earn-more'];
+
+  if (!lesson) {
+    throw new Error('Lesson data did not load. Check that lessons.js is in the same folder as lesson.html.'); 
+  }
 
   document.title = `${lesson.title} — Making Cents`;
   document.getElementById('lessonCategory').textContent = lesson.category;
@@ -249,7 +254,7 @@ function render() {
 
   const chips = document.getElementById('relatedChips');
   chips.innerHTML = (lesson.related || []).map(slug => {
-    const l = LESSONS[slug];
+    const l = lessons[slug];
     return l ? `<a class="related-chip" href="lesson.html?slug=${slug}">${l.title}</a>` : '';
   }).join('');
 
@@ -272,8 +277,15 @@ function updateProgress() {
 }
 window.addEventListener('scroll', updateProgress);
 
-render();
-updateProgress();
+try {
+  render();
+  updateProgress();
+} catch (error) {
+  console.error(error);
+  document.getElementById('lessonTitle').textContent = 'Unable to load this lesson';
+  document.getElementById('lessonBody').innerHTML =
+    '<p style="color:#8a2d2d">There was a problem loading the lesson data. Open the browser console for details.</p>';
+}
 </script>
 </body>
 </html>
