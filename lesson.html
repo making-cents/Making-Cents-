@@ -231,11 +231,9 @@ footer{background:var(--black);padding:48px 5% 28px;border-top:3px solid var(--a
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Follow us</h4>
+        <h4>Contact</h4>
         <ul>
-          <li><a href="#">@makingcents — TikTok</a></li>
-          <li><a href="#">@MakingCentsEcon — YouTube</a></li>
-          <li><a href="#">making-cents-gp@proton.me</a></li>
+          <li><a href="mailto:georgepoliakov2000@gmail.com">georgepoliakov2000@gmail.com</a></li>
         </ul>
       </div>
     </div>
@@ -278,46 +276,6 @@ function setState(slug, patch) {
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-}
-
-function shuffle(arr) {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-
-// Auto-builds one multiple-choice checkpoint per content chunk, drawn straight
-// from the lesson's own glossary — this is what makes quizzes "automatic".
-function buildQuizFromTerms(lesson, chunkCount) {
-  const terms = lesson.terms || [];
-  if (!terms.length || !chunkCount) return [];
-  const quiz = [];
-  for (let i = 0; i < chunkCount; i++) {
-    const term = terms[i % terms.length];
-    const distractorPool = shuffle(terms.filter(t => t.term !== term.term).map(t => t.term));
-    const distractors = distractorPool.slice(0, Math.min(3, distractorPool.length));
-    const options = shuffle([term.term, ...distractors]);
-    quiz.push({
-      question: 'Which key term matches this definition?',
-      prompt: term.def,
-      options,
-      answer: term.term
-    });
-  }
-  return quiz;
-}
-
-// Auto-builds the "explain it yourself" reflection prompt from the glossary.
-function buildReflectionFromTerms(lesson) {
-  const concepts = (lesson.terms || []).slice(0, 5).map(t => t.term);
-  return {
-    question: `In your own words, explain the main idea behind "${lesson.title}" Try to use at least two of the concepts below.`,
-    concepts,
-    minConcepts: Math.min(2, concepts.length || 1)
-  };
 }
 
 function renderQuiz(activity, index, state) {
@@ -366,18 +324,7 @@ function render() {
 
   const body = document.getElementById('lessonBody');
   const paragraphs = lesson.body && lesson.body.length ? lesson.body : [];
-
-  const chunks = [];
-  const chunkSize = 3;
-  for (let i = 0; i < paragraphs.length; i += chunkSize) chunks.push(paragraphs.slice(i, i + chunkSize));
-
-  // Generate quiz + reflection once per lesson, from its own glossary,
-  // and cache them on the lesson object so the click handlers below
-  // (which reference lesson.quiz / lesson.reflection) see the same data.
-  if (!lesson.quiz) lesson.quiz = buildQuizFromTerms(lesson, chunks.length);
-  if (!lesson.reflection) lesson.reflection = buildReflectionFromTerms(lesson);
-
-  const quizCount = lesson.quiz.length;
+  const quizCount = (lesson.quiz || []).length;
   const reflectionCount = lesson.reflection ? 1 : 0;
   const totalActivities = quizCount + reflectionCount;
 
@@ -386,25 +333,32 @@ function render() {
   if (lesson.keyStat && lesson.keyStat.num) html += `<div class="key-stat reveal"><div class="num">${lesson.keyStat.num}</div><div class="label">${lesson.keyStat.label}</div></div>`;
   html += `<div class="step-next"><button class="lesson-action" data-next-step="1">Continue</button></div></div>`;
 
+  const chunks = [];
+  const chunkSize = 3;
+  for (let i = 0; i < paragraphs.length; i += chunkSize) chunks.push(paragraphs.slice(i, i + chunkSize));
+  let activityIndex = 0;
   chunks.forEach((chunk, chunkIndex) => {
     const stepNumber = chunkIndex + 1;
-    const quizSolved = state.quiz && state.quiz[chunkIndex];
+    const hasQuiz = !!(lesson.quiz && lesson.quiz[chunkIndex]);
+    const quizSolved = hasQuiz && state.quiz && state.quiz[activityIndex];
     html += `<div class="lesson-step is-locked" data-step="${stepNumber}"><div class="step-label">Part ${stepNumber} of ${chunks.length}</div>`;
     html += chunk.map(p => `<p class="reveal">${p}</p>`).join('');
-    html += renderQuiz(lesson.quiz[chunkIndex], chunkIndex, state);
-    html += `<div class="step-next"><button class="lesson-action" data-next-step="${stepNumber + 1}" ${quizSolved ? '' : 'disabled'}>Continue</button></div></div>`;
+    if (lesson.quiz && lesson.quiz[chunkIndex]) {
+      html += renderQuiz(lesson.quiz[chunkIndex], activityIndex, state);
+      activityIndex++;
+    }
+    html += `<div class="step-next"><button class="lesson-action" data-next-step="${stepNumber + 1}" ${hasQuiz && !quizSolved ? 'disabled' : ''}>Continue</button></div></div>`;
   });
 
-  // Reflection step is always rendered (numbering must stay contiguous —
-  // this is the gap that previously broke the "Continue" chain).
   const reflectionStep = chunks.length + 1;
-  html += `<div class="lesson-step is-locked" data-step="${reflectionStep}"><div class="step-label">Final reflection</div>${renderReflection(lesson.reflection, state)}<div class="step-next"><button class="lesson-action" id="finishLesson" ${state.reflection ? '' : 'disabled'}>Finish lesson</button></div></div>`;
+  if (lesson.reflection) {
+    html += `<div class="lesson-step is-locked" data-step="${reflectionStep}"><div class="step-label">Final reflection</div>${renderReflection(lesson.reflection, state)}<div class="step-next"><button class="lesson-action" id="finishLesson" disabled>Finish lesson</button></div></div>`;
+  }
 
-  const finalStep = reflectionStep + 1;
-  html += `<div class="lesson-step is-locked" data-step="${finalStep}"><div class="glossary"><h3>Key terms from this lesson</h3><div class="glossary-list">${(lesson.terms || []).map(t => `<div><div class="glossary-term">${escapeHtml(t.term)}</div><div class="glossary-def">${escapeHtml(t.def)}</div></div>`).join('')}</div></div><div class="completion-card" id="completionCard"><div class="completion-mark">✓</div><h2>Lesson complete.</h2><p>You completed every checkpoint and reflection in this lesson.</p><a href="index.html#content">Back to the course</a></div></div>`;
+  html += `<div class="lesson-step is-locked" data-step="${reflectionStep + 1}"><div class="glossary"><h3>Key terms from this lesson</h3><div class="glossary-list">${(lesson.terms || []).map(t => `<div><div class="glossary-term">${escapeHtml(t.term)}</div><div class="glossary-def">${escapeHtml(t.def)}</div></div>`).join('')}</div></div><div class="completion-card" id="completionCard"><div class="completion-mark">✓</div><h2>Lesson complete.</h2><p>You completed every checkpoint and reflection in this lesson.</p><a href="index.html#content">Back to the course</a></div></div>`;
 
   body.innerHTML = html;
-  setupLearning(slug, lesson, state, totalActivities, finalStep);
+  setupLearning(slug, lesson, state, totalActivities, reflectionStep + 1);
 
   const chips = document.getElementById('relatedChips');
   chips.innerHTML = (lesson.related || []).map(relatedSlug => {
@@ -427,7 +381,6 @@ function setupLearning(slug, lesson, state, totalActivities, finalStep) {
     setState(slug, { step: currentStep });
     steps[currentStep]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     updateActivityProgress();
-    updateProgress();
   }
 
   document.querySelectorAll('[data-next-step]').forEach(btn => {
@@ -479,7 +432,7 @@ function setupLearning(slug, lesson, state, totalActivities, finalStep) {
       feedback.style.color = '#754537';
       return;
     }
-    feedback.innerHTML = `<strong>✓ Strong answer.</strong> You connected ${hits.length} key concept${hits.length === 1 ? '' : 's'}: ${hits.map(escapeHtml).join(', ')}. The site is checking for concepts, not a single model answer.`;
+    feedback.innerHTML = `<strong>✓ Strong answer.</strong> You connected ${hits.length} key concepts: ${hits.map(escapeHtml).join(', ')}. The site is checking for concepts, not a single model answer.`;
     feedback.style.color = '#38552f';
     input.disabled = true;
     reflectionButton.disabled = true;
@@ -500,8 +453,12 @@ function setupLearning(slug, lesson, state, totalActivities, finalStep) {
 
   if (state.completed) {
     steps.forEach(step => step.classList.remove('is-locked'));
+    const finish = document.getElementById('finishLesson');
+    if (finish) finish.disabled = false;
   } else {
     revealStep(currentStep);
+    const quizDone = (state.quiz || []).filter(Boolean).length === (lesson.quiz || []).length;
+    if (state.reflection && finish) finish.disabled = false;
   }
 
   function updateActivityProgress() {
@@ -526,10 +483,23 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 
 function updateProgress() {
-  const steps = document.querySelectorAll('.lesson-step');
-  const visible = [...steps].filter(s => !s.classList.contains('is-locked'));
-  const percent = steps.length ? (visible.length / steps.length) * 100 : 0;
-  document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+  const steps = [...document.querySelectorAll('.lesson-step')];
+  if (!steps.length) return;
+  const state = getState(getSlug());
+  const activities = document.querySelectorAll('.activity-card');
+  let done = 0;
+  activities.forEach(card => {
+    if (card.classList.contains('quiz-card')) {
+      const i = Number(card.dataset.quizIndex);
+      if (state.quiz && state.quiz[i]) done++;
+    } else if (card.classList.contains('reflection-card') && state.reflection) done++;
+  });
+  const stepProgress = steps.filter(s => !s.classList.contains('is-locked')).length / steps.length;
+  const activityProgress = activities.length ? done / activities.length : 0;
+  let percent = Math.round((stepProgress * 0.55 + activityProgress * 0.45) * 100);
+  if (state.completed) percent = 100;
+  const fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = Math.min(percent, 100) + '%';
 }
 
 try { render(); }
@@ -538,6 +508,8 @@ catch (error) {
   document.getElementById('lessonTitle').textContent = 'Unable to load this lesson';
   document.getElementById('lessonBody').innerHTML = '<p style="color:#8a2d2d">There was a problem loading the lesson data. Open the browser console for details.</p>';
 }
+</script>
+<script>
 </script>
 </body>
 </html>
