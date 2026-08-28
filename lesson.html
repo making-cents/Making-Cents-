@@ -130,6 +130,45 @@ footer{background:var(--black);padding:48px 5% 28px;border-top:3px solid var(--a
 @media (max-width:768px){
   .footer-top{grid-template-columns:1fr;gap:28px;}
 }
+
+/* ── LEARNING PLATFORM UI ── */
+.lesson-intro-status{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 28px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg-light);font-size:12px;color:var(--text-muted);}
+.lesson-intro-status strong{color:var(--text);}
+.lesson-step{padding:0 0 36px;margin-bottom:36px;border-bottom:1px solid var(--border);}
+.lesson-step.is-locked{display:none;}
+.step-label{font-family:var(--sans);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;}
+.step-next{display:flex;justify-content:flex-end;margin-top:22px;}
+.lesson-action{appearance:none;border:0;border-radius:999px;background:var(--text);color:#fff;padding:12px 20px;font:600 12px var(--sans);cursor:pointer;transition:transform .15s,opacity .15s,background .15s;}
+.lesson-action:hover:not(:disabled){transform:translateY(-2px);background:#302316;}
+.lesson-action:disabled{opacity:.35;cursor:not-allowed;}
+.activity-card{margin:30px 0 0;padding:28px;border:1px solid var(--border);border-radius:12px;background:var(--bg-light);}
+.activity-kicker{font:800 10px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+.activity-card h3{font:400 24px var(--serif);line-height:1.25;color:var(--text);margin-bottom:10px;}
+.activity-prompt{font-size:14px;color:var(--text-mid);line-height:1.65;margin-bottom:18px;}
+.quiz-options{display:grid;gap:9px;}
+.quiz-option{width:100%;text-align:left;padding:13px 15px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-white);font:500 13px var(--sans);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s,transform .15s;}
+.quiz-option:hover:not(:disabled){border-color:var(--amber);transform:translateX(2px);}
+.quiz-option.correct{border-color:#54764c;background:#edf3ea;}
+.quiz-option.incorrect{border-color:#a76555;background:#f7ece8;}
+.quiz-option:disabled{cursor:default;}
+.activity-feedback{display:none;margin-top:15px;padding:13px 15px;border-radius:8px;font-size:13px;line-height:1.6;}
+.activity-feedback.show{display:block;}
+.activity-feedback.success{background:#edf3ea;color:#38552f;}
+.activity-feedback.retry{background:#f7ece8;color:#754537;}
+.reflection-box{width:100%;min-height:145px;resize:vertical;padding:14px 15px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-white);color:var(--text);font:400 14px/1.65 var(--sans);outline:none;}
+.reflection-box:focus{border-color:var(--amber);}
+.concept-list{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px;}
+.concept-chip{padding:6px 10px;border-radius:999px;background:var(--bg-white);border:1px solid var(--border);font:700 11px var(--sans);color:var(--text-muted);}
+.concept-chip.hit{border-color:#54764c;background:#edf3ea;color:#38552f;}
+.reflection-feedback{margin-top:14px;font-size:13px;line-height:1.65;}
+.completion-card{margin:12px 0 20px;padding:34px 28px;border-radius:12px;background:var(--text);color:#fff;text-align:center;}
+.completion-mark{width:52px;height:52px;border-radius:50%;border:1px solid var(--amber);color:var(--amber);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;}
+.completion-card h2{font:400 30px/1.2 var(--serif);margin-bottom:9px;}
+.completion-card p{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:20px;}
+.completion-card a{display:inline-block;padding:11px 18px;border-radius:999px;background:var(--amber);color:var(--text);font:700 12px var(--sans);text-decoration:none;}
+.progress-copy{font-weight:700;color:var(--text);}
+@media(max-width:600px){.activity-card{padding:22px}.lesson-intro-status{align-items:flex-start;flex-direction:column}.step-next{justify-content:stretch}.step-next .lesson-action{width:100%;}}
+
 </style>
 </head>
 <body>
@@ -209,21 +248,111 @@ footer{background:var(--black);padding:48px 5% 28px;border-top:3px solid var(--a
 
 <script src="lessons.js"></script>
 <script>
-// ── LESSON RENDERER ──
+// ── MAKING CENTS LEARNING ENGINE ──
+const PROGRESS_KEY = 'makingCentsProgress';
 
 function getSlug() {
   const params = new URLSearchParams(window.location.search);
   return params.get('slug') || 'why-footballers-earn-more';
 }
 
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveProgress(progress) {
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+}
+
+function getState(slug) {
+  const progress = loadProgress();
+  return progress[slug] || { started: false, completed: false, step: 0, quiz: [], reflection: false };
+}
+
+function setState(slug, patch) {
+  const progress = loadProgress();
+  progress[slug] = { ...getState(slug), ...patch, started: true };
+  saveProgress(progress);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+
+function shuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+// Auto-builds one multiple-choice checkpoint per content chunk, drawn straight
+// from the lesson's own glossary — this is what makes quizzes "automatic".
+function buildQuizFromTerms(lesson, chunkCount) {
+  const terms = lesson.terms || [];
+  if (!terms.length || !chunkCount) return [];
+  const quiz = [];
+  for (let i = 0; i < chunkCount; i++) {
+    const term = terms[i % terms.length];
+    const distractorPool = shuffle(terms.filter(t => t.term !== term.term).map(t => t.term));
+    const distractors = distractorPool.slice(0, Math.min(3, distractorPool.length));
+    const options = shuffle([term.term, ...distractors]);
+    quiz.push({
+      question: 'Which key term matches this definition?',
+      prompt: term.def,
+      options,
+      answer: term.term
+    });
+  }
+  return quiz;
+}
+
+// Auto-builds the "explain it yourself" reflection prompt from the glossary.
+function buildReflectionFromTerms(lesson) {
+  const concepts = (lesson.terms || []).slice(0, 5).map(t => t.term);
+  return {
+    question: `In your own words, explain the main idea behind "${lesson.title}" Try to use at least two of the concepts below.`,
+    concepts,
+    minConcepts: Math.min(2, concepts.length || 1)
+  };
+}
+
+function renderQuiz(activity, index, state) {
+  const solved = state.quiz && state.quiz[index];
+  const options = activity.options.map(option => `
+    <button class="quiz-option ${solved === option ? 'correct' : ''}" data-answer="${escapeHtml(option)}" ${solved ? 'disabled' : ''}>${escapeHtml(option)}</button>
+  `).join('');
+  return `
+    <div class="activity-card quiz-card" data-quiz-index="${index}">
+      <div class="activity-kicker">Checkpoint ${index + 1}</div>
+      <h3>${escapeHtml(activity.question)}</h3>
+      <div class="activity-prompt">${escapeHtml(activity.prompt)}</div>
+      <div class="quiz-options">${options}</div>
+      <div class="activity-feedback ${solved ? 'show success' : ''}">${solved ? '<strong>✓ Correct.</strong> You can continue.' : ''}</div>
+    </div>`;
+}
+
+function renderReflection(reflection, state) {
+  const saved = state.reflection || false;
+  return `
+    <div class="activity-card reflection-card" id="reflectionCard">
+      <div class="activity-kicker">Explain it yourself</div>
+      <h3>${escapeHtml(reflection.question)}</h3>
+      <div class="concept-list">${reflection.concepts.map(c => `<span class="concept-chip">${escapeHtml(c)}</span>`).join('')}</div>
+      <textarea class="reflection-box" id="reflectionInput" placeholder="Write your explanation here…" ${saved ? 'disabled' : ''}>${saved ? escapeHtml(state.reflectionText || '') : ''}</textarea>
+      <div class="step-next"><button class="lesson-action" id="checkReflection" ${saved ? 'disabled' : ''}>${saved ? 'Answer accepted' : 'Check my answer'}</button></div>
+      <div class="reflection-feedback" id="reflectionFeedback">${saved ? '<strong>✓ Strong answer.</strong> You connected the lesson to the key economic concepts.' : ''}</div>
+    </div>`;
+}
+
 function render() {
   const slug = getSlug();
   const lessons = window.LESSONS || {};
   const lesson = lessons[slug] || lessons['why-footballers-earn-more'];
-
-  if (!lesson) {
-    throw new Error('Lesson data did not load. Check that lessons.js is in the same folder as lesson.html.'); 
-  }
+  if (!lesson) throw new Error('Lesson data did not load.');
 
   document.title = `${lesson.title} — Making Cents`;
   document.getElementById('lessonCategory').textContent = lesson.category;
@@ -231,34 +360,160 @@ function render() {
   document.getElementById('lessonTitle').textContent = lesson.title;
   document.getElementById('lessonReadTime').textContent = lesson.readTime;
 
+  const state = getState(slug);
+  state.started = true;
+  setState(slug, state);
+
   const body = document.getElementById('lessonBody');
-  let html = `<p class="reveal">${lesson.intro}</p>`;
+  const paragraphs = lesson.body && lesson.body.length ? lesson.body : [];
 
-  if (lesson.keyStat && lesson.keyStat.num) {
-    html += `<div class="key-stat reveal"><div class="num">${lesson.keyStat.num}</div><div class="label">${lesson.keyStat.label}</div></div>`;
-  }
+  const chunks = [];
+  const chunkSize = 3;
+  for (let i = 0; i < paragraphs.length; i += chunkSize) chunks.push(paragraphs.slice(i, i + chunkSize));
 
-  if (lesson.body && lesson.body.length) {
-    html += lesson.body.map(p => `<p class="reveal">${p}</p>`).join('');
-  } else {
-    html += `<div class="lesson-placeholder reveal"><strong>Draft this lesson:</strong> replace this box with your written explanation — context, a concrete example, the "however" nuance, and a closing takeaway. Everything above (title, category, intro line) is already wired up from your Our Content page, so you're just filling in the body.</div>`;
-  }
+  // Generate quiz + reflection once per lesson, from its own glossary,
+  // and cache them on the lesson object so the click handlers below
+  // (which reference lesson.quiz / lesson.reflection) see the same data.
+  if (!lesson.quiz) lesson.quiz = buildQuizFromTerms(lesson, chunks.length);
+  if (!lesson.reflection) lesson.reflection = buildReflectionFromTerms(lesson);
 
-  if (lesson.terms && lesson.terms.length) {
-    html += `<div class="glossary reveal"><h3>Key terms from this lesson</h3><div class="glossary-list">${
-      lesson.terms.map(t => `<div><div class="glossary-term">${t.term}</div><div class="glossary-def">${t.def}</div></div>`).join('')
-    }</div></div>`;
-  }
+  const quizCount = lesson.quiz.length;
+  const reflectionCount = lesson.reflection ? 1 : 0;
+  const totalActivities = quizCount + reflectionCount;
+
+  let html = `<div class="lesson-intro-status"><span><strong>Lesson progress</strong></span><span id="lessonProgressText" class="progress-copy">0 of ${totalActivities} activities complete</span></div>`;
+  html += `<div class="lesson-step" data-step="0"><div class="step-label">Start here</div><p class="reveal">${lesson.intro}</p>`;
+  if (lesson.keyStat && lesson.keyStat.num) html += `<div class="key-stat reveal"><div class="num">${lesson.keyStat.num}</div><div class="label">${lesson.keyStat.label}</div></div>`;
+  html += `<div class="step-next"><button class="lesson-action" data-next-step="1">Continue</button></div></div>`;
+
+  chunks.forEach((chunk, chunkIndex) => {
+    const stepNumber = chunkIndex + 1;
+    const quizSolved = state.quiz && state.quiz[chunkIndex];
+    html += `<div class="lesson-step is-locked" data-step="${stepNumber}"><div class="step-label">Part ${stepNumber} of ${chunks.length}</div>`;
+    html += chunk.map(p => `<p class="reveal">${p}</p>`).join('');
+    html += renderQuiz(lesson.quiz[chunkIndex], chunkIndex, state);
+    html += `<div class="step-next"><button class="lesson-action" data-next-step="${stepNumber + 1}" ${quizSolved ? '' : 'disabled'}>Continue</button></div></div>`;
+  });
+
+  // Reflection step is always rendered (numbering must stay contiguous —
+  // this is the gap that previously broke the "Continue" chain).
+  const reflectionStep = chunks.length + 1;
+  html += `<div class="lesson-step is-locked" data-step="${reflectionStep}"><div class="step-label">Final reflection</div>${renderReflection(lesson.reflection, state)}<div class="step-next"><button class="lesson-action" id="finishLesson" ${state.reflection ? '' : 'disabled'}>Finish lesson</button></div></div>`;
+
+  const finalStep = reflectionStep + 1;
+  html += `<div class="lesson-step is-locked" data-step="${finalStep}"><div class="glossary"><h3>Key terms from this lesson</h3><div class="glossary-list">${(lesson.terms || []).map(t => `<div><div class="glossary-term">${escapeHtml(t.term)}</div><div class="glossary-def">${escapeHtml(t.def)}</div></div>`).join('')}</div></div><div class="completion-card" id="completionCard"><div class="completion-mark">✓</div><h2>Lesson complete.</h2><p>You completed every checkpoint and reflection in this lesson.</p><a href="index.html#content">Back to the course</a></div></div>`;
 
   body.innerHTML = html;
+  setupLearning(slug, lesson, state, totalActivities, finalStep);
 
   const chips = document.getElementById('relatedChips');
-  chips.innerHTML = (lesson.related || []).map(slug => {
-    const l = lessons[slug];
-    return l ? `<a class="related-chip" href="lesson.html?slug=${slug}">${l.title}</a>` : '';
+  chips.innerHTML = (lesson.related || []).map(relatedSlug => {
+    const l = lessons[relatedSlug];
+    return l ? `<a class="related-chip" href="lesson.html?slug=${relatedSlug}">${escapeHtml(l.title)}</a>` : '';
   }).join('');
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  updateProgress();
+}
+
+function setupLearning(slug, lesson, state, totalActivities, finalStep) {
+  const steps = [...document.querySelectorAll('.lesson-step')];
+  let currentStep = Math.max(0, Math.min(Number(state.step || 0), finalStep));
+  if (state.completed) currentStep = finalStep;
+
+  function revealStep(index) {
+    steps.forEach((step, i) => step.classList.toggle('is-locked', i > index));
+    currentStep = Math.max(currentStep, index);
+    setState(slug, { step: currentStep });
+    steps[currentStep]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    updateActivityProgress();
+    updateProgress();
+  }
+
+  document.querySelectorAll('[data-next-step]').forEach(btn => {
+    btn.addEventListener('click', () => revealStep(Number(btn.dataset.nextStep)));
+  });
+
+  document.querySelectorAll('.quiz-card').forEach(card => {
+    const index = Number(card.dataset.quizIndex);
+    card.querySelectorAll('.quiz-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const answer = option.dataset.answer;
+        const correct = answer === lesson.quiz[index].answer;
+        const feedback = card.querySelector('.activity-feedback');
+        if (correct) {
+          option.classList.add('correct');
+          card.querySelectorAll('.quiz-option').forEach(o => o.disabled = true);
+          feedback.className = 'activity-feedback show success';
+          feedback.innerHTML = '<strong>✓ Correct.</strong> Exactly — you have identified the key concept. You can continue.';
+          const quizState = [...(getState(slug).quiz || [])];
+          quizState[index] = answer;
+          setState(slug, { quiz: quizState });
+          const next = card.closest('.lesson-step')?.querySelector('[data-next-step]');
+          if (next) next.disabled = false;
+          updateActivityProgress();
+        } else {
+          option.classList.add('incorrect');
+          feedback.className = 'activity-feedback show retry';
+          feedback.innerHTML = '<strong>Not quite.</strong> Re-read the explanation above and try again.';
+          setTimeout(() => option.classList.remove('incorrect'), 700);
+        }
+      });
+    });
+  });
+
+  const reflectionButton = document.getElementById('checkReflection');
+  if (reflectionButton) reflectionButton.addEventListener('click', () => {
+    const input = document.getElementById('reflectionInput');
+    const answer = input.value.trim().toLowerCase();
+    const concepts = lesson.reflection.concepts;
+    const hits = concepts.filter(concept => answer.includes(concept.toLowerCase()));
+    const feedback = document.getElementById('reflectionFeedback');
+    if (answer.length < 30) {
+      feedback.innerHTML = '<strong>Keep going.</strong> Give yourself a little more room to explain the idea.';
+      feedback.style.color = '#754537';
+      return;
+    }
+    if (hits.length < lesson.reflection.minConcepts) {
+      feedback.innerHTML = `<strong>Almost there.</strong> Try to connect at least ${lesson.reflection.minConcepts} of the key concepts above. You can edit your answer and try again.`;
+      feedback.style.color = '#754537';
+      return;
+    }
+    feedback.innerHTML = `<strong>✓ Strong answer.</strong> You connected ${hits.length} key concept${hits.length === 1 ? '' : 's'}: ${hits.map(escapeHtml).join(', ')}. The site is checking for concepts, not a single model answer.`;
+    feedback.style.color = '#38552f';
+    input.disabled = true;
+    reflectionButton.disabled = true;
+    reflectionButton.textContent = 'Answer accepted';
+    setState(slug, { reflection: true, reflectionText: input.value });
+    updateActivityProgress();
+    const finish = document.getElementById('finishLesson');
+    if (finish) finish.disabled = false;
+  });
+
+  const finish = document.getElementById('finishLesson');
+  if (finish) finish.addEventListener('click', () => {
+    setState(slug, { completed: true, step: finalStep });
+    revealStep(finalStep);
+    updateActivityProgress();
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+  });
+
+  if (state.completed) {
+    steps.forEach(step => step.classList.remove('is-locked'));
+  } else {
+    revealStep(currentStep);
+  }
+
+  function updateActivityProgress() {
+    const latest = getState(slug);
+    const done = (latest.quiz || []).filter(Boolean).length + (latest.reflection ? 1 : 0);
+    const text = document.getElementById('lessonProgressText');
+    if (text) text.textContent = `${done} of ${totalActivities} activities complete`;
+    if (done === totalActivities && totalActivities > 0 && !latest.completed) {
+      const finish = document.getElementById('finishLesson');
+      if (finish) finish.disabled = false;
+    }
+  }
 }
 
 const revealObserver = new IntersectionObserver((entries) => {
@@ -271,20 +526,17 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 
 function updateProgress() {
-  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-  const scrolled = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
-  document.getElementById('progressFill').style.width = Math.min(scrolled, 100) + '%';
+  const steps = document.querySelectorAll('.lesson-step');
+  const visible = [...steps].filter(s => !s.classList.contains('is-locked'));
+  const percent = steps.length ? (visible.length / steps.length) * 100 : 0;
+  document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
 }
-window.addEventListener('scroll', updateProgress);
 
-try {
-  render();
-  updateProgress();
-} catch (error) {
+try { render(); }
+catch (error) {
   console.error(error);
   document.getElementById('lessonTitle').textContent = 'Unable to load this lesson';
-  document.getElementById('lessonBody').innerHTML =
-    '<p style="color:#8a2d2d">There was a problem loading the lesson data. Open the browser console for details.</p>';
+  document.getElementById('lessonBody').innerHTML = '<p style="color:#8a2d2d">There was a problem loading the lesson data. Open the browser console for details.</p>';
 }
 </script>
 </body>
