@@ -484,7 +484,7 @@ footer { background: var(--black); padding: 48px 5% 28px; border-top: 3px solid 
           <li><a href="mailto:georgepoliakov2000@gmail.com">georgepoliakov2000@gmail.com</a></li>
         </ul></div>
       </div>
-      <div class="footer-bottom"><p>© 2025 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
+      <div class="footer-bottom"><p>© 2026 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
     </div>
   </footer>
 </div>
@@ -657,7 +657,7 @@ footer { background: var(--black); padding: 48px 5% 28px; border-top: 3px solid 
           <li><a onclick="showPage('about')">About</a></li>
           <li><a onclick="showPage('contact')">Contact</a></li>
         </ul></div>
-      <div class="footer-bottom"><p>© 2025 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
+      <div class="footer-bottom"><p>© 2026 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
     </div>
   </footer>
 </div>
@@ -751,7 +751,7 @@ footer { background: var(--black); padding: 48px 5% 28px; border-top: 3px solid 
           <li><a onclick="showPage('about')">About</a></li>
           <li><a onclick="showPage('contact')">Contact</a></li>
         </ul></div>
-      <div class="footer-bottom"><p>© 2025 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
+      <div class="footer-bottom"><p>© 2026 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
     </div>
   </footer>
 </div>
@@ -798,7 +798,7 @@ footer { background: var(--black); padding: 48px 5% 28px; border-top: 3px solid 
           <li><a onclick="showPage('about')">About</a></li>
           <li><a onclick="showPage('contact')">Contact</a></li>
         </ul></div>
-      <div class="footer-bottom"><p>© 2025 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
+      <div class="footer-bottom"><p>© 2026 Making Cents — Economics, Explained</p><p>Made for the curious generation.</p></div>
     </div>
   </footer>
 </div>
@@ -888,17 +888,6 @@ function startCourse() {
   });
   const destination = firstIncomplete || rows[0];
   if (destination) window.location.href = destination.getAttribute('href');
-}
-function startCourse() {
-  const rows = [...document.querySelectorAll('.lesson-row[href*="lesson.html?slug="]')];
-  const progress = getCourseProgress();
-  const firstIncomplete = rows.find(row => {
-    const match = row.getAttribute('href').match(/slug=([^&]+)/);
-    return match && !(progress[decodeURIComponent(match[1])] || {}).completed;
-  });
-  if (firstIncomplete) {
-    window.location.href = firstIncomplete.getAttribute('href');
-  }
 }
 
 function toggleFaq(item) {
