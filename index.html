@@ -411,7 +411,7 @@ footer { background: var(--black); padding: 48px 5% 28px; border-top: 3px solid 
           </div>
         </div>
         <div class="indicator-explain" id="indicatorExplain">Loading…</div>
-        <div class="indicator-source">Sources: ONS, Bank of England — figures approximate mid-2026, check for the latest before relying on them.</div>
+        <div class="indicator-source">Sources: Office for National Statistics (ONS), Bank of England — figures accurate as of August 2026.</div>
       </div>
 
       <div class="widget-card swoop" data-dir="right">
@@ -905,9 +905,27 @@ updateCourseProgress();
 window.addEventListener('storage', updateCourseProgress);
 
 const INDICATORS = {
-  inflation: { now: 2.6, then: 11.1, thenLabel: '2022 peak', max: 12, explain: "Prices are still rising, just far more slowly than the 11.1% peak of late 2022 — though still above the Bank of England's 2% target." },
-  interest: { now: 3.75, then: 5.25, thenLabel: 'peak, 2023–24', max: 6, explain: "This is the rate that shapes mortgages and savings across the whole economy. The Bank has cut it repeatedly since August 2024 as inflation eased." },
-  unemployment: { now: 4.9, then: 4.0, thenLabel: '~2 years ago', max: 8, explain: "Just under 1 in 20 people looking for work currently can't find it — a gradual rise as the labour market has cooled." }
+  inflation: { 
+    now: 2.9, 
+    then: 11.1, 
+    thenLabel: '2022 peak', 
+    max: 12, 
+    explain: "Prices are rising at 2.9% annually, down significantly from the 11.1% peak of late 2022, though remaining slightly above the Bank of England's 2% target." 
+  },
+  interest: { 
+    now: 3.75, 
+    then: 5.25, 
+    thenLabel: 'peak, 2023–24', 
+    max: 6, 
+    explain: "This rate shapes mortgages and savings across the UK economy. The Bank of England held the base rate at 3.75% following cuts from its 5.25% peak." 
+  },
+  unemployment: { 
+    now: 4.9, 
+    then: 4.0, 
+    thenLabel: '~2 years ago', 
+    max: 8, 
+    explain: "Just under 1 in 20 people looking for work currently cannot find it, reflecting a stabilized labor market after a slight rise from recent lows." 
+  }
 };
 
 function renderIndicator(key) {
